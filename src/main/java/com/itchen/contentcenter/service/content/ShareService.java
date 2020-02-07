@@ -7,12 +7,8 @@ import com.itchen.contentcenter.domain.entity.share.Share;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * 分享服务 .
@@ -31,25 +27,18 @@ public class ShareService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private DiscoveryClient discoveryClient;
-
     public ShareDTO findById(Integer id) {
         // 获取分享详情
         Share share = this.shareMapper.selectByPrimaryKey(id);
         Integer userId = share.getUserId();
         // 怎么调用用户微服务的 /users/{id}
 
-        // 用户中心所有实例的信息
-        List<ServiceInstance> instances = this.discoveryClient.getInstances("user-center");
-        String targetURL = instances.stream()
-                .map(instance -> instance.getUri().toString() + "/users/{id}")
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("当前没有实例！"));
-
-        log.info("请求的目标地址：{}", targetURL);
+        // 1. 代码不可读
+        // 2. 复制 URL 难以维护，https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=02003390_42_hao_pg&wd=%E8%A7%86%E9%A2%91&oq=aaa&rsv_pq=c27d61f2000068e5&rsv_t=ab73spP6qpdFF7go6UQnqMRcbceWjDqmAFkKY0FXaFe8%2FH7BIuVjMx3TUrZLDvmSCmU%2BFWt54U0a&rqlang=cn&rsv_enter=0&rsv_dl=tb&inputT=731&rsv_sug3=8&rsv_sug1=1&rsv_sug7=100&rsv_sug2=0&rsv_sug4=731
+        // 3. 难以响应需求的变化，变化很没有幸福感
+        // 4. 编程体验不统一
         UserDTO userDTO = restTemplate.getForObject(
-                targetURL,
+                "http://user-center/users/{userId}",
                 UserDTO.class, userId
         );
         ShareDTO shareDTO = new ShareDTO();

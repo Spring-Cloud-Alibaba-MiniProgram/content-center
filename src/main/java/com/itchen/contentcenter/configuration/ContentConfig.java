@@ -1,5 +1,6 @@
-package com.itchen.contentcenter.config;
+package com.itchen.contentcenter.configuration;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,7 @@ public class ContentConfig {
      * @return
      */
     @Bean
+    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
