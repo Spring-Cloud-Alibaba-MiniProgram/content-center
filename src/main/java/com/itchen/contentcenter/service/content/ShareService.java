@@ -4,6 +4,7 @@ import com.itchen.contentcenter.dao.share.ShareMapper;
 import com.itchen.contentcenter.domain.dto.content.ShareDTO;
 import com.itchen.contentcenter.domain.dto.user.UserDTO;
 import com.itchen.contentcenter.domain.entity.share.Share;
+import com.itchen.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ShareService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private UserCenterFeignClient userCenterFeignClient;
+
     public ShareDTO findById(Integer id) {
         // 获取分享详情
         Share share = this.shareMapper.selectByPrimaryKey(id);
@@ -37,10 +41,14 @@ public class ShareService {
         // 2. 复制 URL 难以维护，https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=02003390_42_hao_pg&wd=%E8%A7%86%E9%A2%91&oq=aaa&rsv_pq=c27d61f2000068e5&rsv_t=ab73spP6qpdFF7go6UQnqMRcbceWjDqmAFkKY0FXaFe8%2FH7BIuVjMx3TUrZLDvmSCmU%2BFWt54U0a&rqlang=cn&rsv_enter=0&rsv_dl=tb&inputT=731&rsv_sug3=8&rsv_sug1=1&rsv_sug7=100&rsv_sug2=0&rsv_sug4=731
         // 3. 难以响应需求的变化，变化很没有幸福感
         // 4. 编程体验不统一
-        UserDTO userDTO = restTemplate.getForObject(
-                "http://user-center/users/{userId}",
-                UserDTO.class, userId
-        );
+        // UserDTO userDTO = restTemplate.getForObject(
+        //         "http://user-center/users/{userId}",
+        //         UserDTO.class, userId
+        // );
+
+        // 使用 FeignClient 调用
+        UserDTO userDTO = userCenterFeignClient.findById(userId);
+
         ShareDTO shareDTO = new ShareDTO();
         // 消息装配
         BeanUtils.copyProperties(share, shareDTO);

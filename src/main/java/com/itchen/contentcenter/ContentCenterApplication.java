@@ -2,6 +2,7 @@ package com.itchen.contentcenter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
@@ -12,6 +13,8 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @since 2020-02-05
  */
 @MapperScan("com.itchen")
+// @EnableFeignClients(defaultConfiguration = GlobalFeignConfiguration.class)
+@EnableFeignClients
 @SpringBootApplication
 public class ContentCenterApplication {
 
