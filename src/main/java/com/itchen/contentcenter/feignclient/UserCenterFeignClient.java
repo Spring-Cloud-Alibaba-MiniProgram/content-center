@@ -1,6 +1,7 @@
 package com.itchen.contentcenter.feignclient;
 
 import com.itchen.contentcenter.domain.dto.user.UserDTO;
+import com.itchen.contentcenter.feignclient.fallbackfactory.UserCenterFeignClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @since 2020-02-07
  */
 // @FeignClient(name = "user-center", configuration = UserCenterFeignConfiguration.class)
-@FeignClient(name = "user-center")
+@FeignClient(name = "user-center",
+        // fallback、fallbackFactory 不能同时使用
+        // fallback = UserCenterFeignClientFallback.class,
+        fallbackFactory = UserCenterFeignClientFallbackFactory.class)
 public interface UserCenterFeignClient {
 
     /**

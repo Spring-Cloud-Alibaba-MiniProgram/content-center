@@ -1,5 +1,6 @@
 package com.itchen.contentcenter.configuration;
 
+import org.springframework.cloud.alibaba.sentinel.annotation.SentinelRestTemplate;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class ContentConfig {
      */
     @Bean
     @LoadBalanced
+    @SentinelRestTemplate
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

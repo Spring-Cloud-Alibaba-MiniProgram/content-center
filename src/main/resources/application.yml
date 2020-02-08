@@ -22,6 +22,14 @@ spring:
           version: v1
           # 允许调用的提供者版本
           target-version: v1
+    sentinel:
+      filter:
+        # 打开/关闭掉对 SpringMVC 端点的保护
+        enabled: true
+      transport:
+        # 指定 sentinel 控制台的地址
+        dashboard: localhost:8080
+
   application:
     # 服务名称尽量使用 -，不要用 _，不要用特殊字符
     name: content-center
@@ -43,6 +51,9 @@ logging:
 
 # Feign 配置属性方式(全局/细粒度)
 feign:
+  sentinel:
+    # 为 feign 整合 sentinel
+    enabled: true
   client:
     config:
       # 全局配置
@@ -59,3 +70,13 @@ feign:
     # feign 单个路径的最大连接数
     max-connections-per-route: 50
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+resttemplate:
+  sentinel:
+    # 关闭 @SentinelRestTemplate 注解
+    enabled: false
