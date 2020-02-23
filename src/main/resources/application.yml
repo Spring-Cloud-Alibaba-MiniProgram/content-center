@@ -97,3 +97,8 @@ resttemplate:
   sentinel:
     # 关闭 @SentinelRestTemplate 注解
     enabled: false
+
+jwt:
+  secret: aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrsssttt
+  # 有效期，单位秒，默认 2 周
+  expire-time-in-second: 1209600
