@@ -1,5 +1,6 @@
 package com.itchen.contentcenter.controller.content;
 
+import com.itchen.contentcenter.auth.Auth;
 import com.itchen.contentcenter.domain.dto.content.ShareDTO;
 import com.itchen.contentcenter.service.content.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class ShareController {
     private ShareService shareService;
 
     @GetMapping("/{id}")
+    @Auth
     public ShareDTO findById(@PathVariable Integer id) {
         return shareService.findById(id);
     }
