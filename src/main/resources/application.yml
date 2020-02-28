@@ -73,6 +73,8 @@ feign:
       # 全局配置
       default:
         loggerLevel: full
+        requestInterceptors:
+          - com.itchen.contentcenter.feignclient.Interceptor.TokenRelayRequestInterceptor
         # 想要调用的微服务的名称(细粒度)
         # user-center:
         # loggerLevel: full
