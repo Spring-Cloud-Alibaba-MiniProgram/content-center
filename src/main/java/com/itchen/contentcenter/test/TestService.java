@@ -1,4 +1,4 @@
-package com.itchen.contentcenter.service;
+package com.itchen.contentcenter.test;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import lombok.extern.slf4j.Slf4j;

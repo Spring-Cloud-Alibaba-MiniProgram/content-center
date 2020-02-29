@@ -1,10 +1,13 @@
 package com.itchen.contentcenter.configuration;
 
+import com.itchen.contentcenter.test.TestRestTemplateTokenRelayInterceptor;
 import org.springframework.cloud.alibaba.sentinel.annotation.SentinelRestTemplate;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 /**
  * 配置 .
@@ -26,7 +29,13 @@ public class ContentConfig {
     @LoadBalanced
     @SentinelRestTemplate
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        RestTemplate template = new RestTemplate();
+        template.setInterceptors(
+                Collections.singletonList(
+                        new TestRestTemplateTokenRelayInterceptor()
+                )
+        );
+        return template;
     }
 
 }

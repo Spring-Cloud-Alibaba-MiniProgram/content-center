@@ -1,4 +1,4 @@
-package com.itchen.contentcenter.controller;
+package com.itchen.contentcenter.test;
 
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.SphU;
@@ -12,20 +12,21 @@ import com.itchen.contentcenter.domain.entity.share.Share;
 import com.itchen.contentcenter.feignclient.TestBaiduFeignClient;
 import com.itchen.contentcenter.feignclient.TestUserCenterFeignClient;
 import com.itchen.contentcenter.sentineltest.TestControllerBlockHandlerClass;
-import com.itchen.contentcenter.service.TestService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -192,6 +193,28 @@ public class TestController {
     @GetMapping("test-rest-template-sentinel/{userId}")
     public UserDTO test(@PathVariable String userId) {
         return this.restTemplate.getForObject("http://user-center/users/{userId}", UserDTO.class, userId);
+    }
+
+    /**
+     * RestTemplate 传递 Token
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("tokenRelay/{userId}")
+    public ResponseEntity<UserDTO> tokenRelay(@PathVariable String userId, @RequestHeader("X-Token") String xToken, HttpServletRequest request) {
+        String token = request.getHeader("X-Token");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Token", token);
+
+        return this.restTemplate.exchange(
+                "http://user-center/users/{userId}",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                UserDTO.class,
+                userId
+        );
+
     }
 
     @Autowired
