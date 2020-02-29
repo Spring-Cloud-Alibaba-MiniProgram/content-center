@@ -1,5 +1,6 @@
 package com.itchen.contentcenter.controller.content;
 
+import com.itchen.contentcenter.auth.Authorization;
 import com.itchen.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.itchen.contentcenter.domain.entity.share.Share;
 import com.itchen.contentcenter.service.content.ShareService;
@@ -21,6 +22,7 @@ public class ShareAdminController {
     private ShareService shareService;
 
     @PutMapping("/audit/{id}")
+    @Authorization(hasRole = "admin")
     public Share auditById(@PathVariable Integer id, @RequestBody ShareAuditDTO auditDTO) {
         // 认证、授权
 

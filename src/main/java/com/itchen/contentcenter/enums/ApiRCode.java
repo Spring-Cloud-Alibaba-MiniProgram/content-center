@@ -17,7 +17,12 @@ public enum ApiRCode implements IRCode {
     /**
      * 成功
      */
-    SUCCESS(0, "执行成功");
+    SUCCESS(0, "执行成功"),
+    /**
+     * Token
+     */
+    TOKEN_INVALIDED(401, "Token 非法，用户不允许访问！"),
+    UN_AUTHORIZATION(403, "用户无权访问！");
 
     private final long code;
 

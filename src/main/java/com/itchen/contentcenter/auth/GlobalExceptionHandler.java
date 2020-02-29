@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<R> error(AuthSecurityException e) {
         log.warn("【发生 AuthSecurityException 异常】", e);
         return new ResponseEntity<>(
-                R.failed("Token 非法，用户不允许访问！"),
+                R.failed(e.getRCode()),
                 HttpStatus.UNAUTHORIZED
         );
     }

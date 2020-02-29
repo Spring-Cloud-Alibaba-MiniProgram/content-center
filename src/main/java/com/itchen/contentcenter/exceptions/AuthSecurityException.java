@@ -25,6 +25,15 @@ public class AuthSecurityException extends RuntimeException {
         super(message);
     }
 
+    public AuthSecurityException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public AuthSecurityException(IRCode RCode, Throwable cause) {
+        super(RCode.getMsg(), cause);
+        this.RCode = RCode;
+    }
+
     public AuthSecurityException(IRCode RCode) {
         super(RCode.getMsg());
         this.RCode = RCode;

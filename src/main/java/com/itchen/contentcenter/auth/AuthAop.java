@@ -1,5 +1,6 @@
 package com.itchen.contentcenter.auth;
 
+import com.itchen.contentcenter.enums.ApiRCode;
 import com.itchen.contentcenter.exceptions.AuthSecurityException;
 import com.itchen.contentcenter.util.JwtOperator;
 import io.jsonwebtoken.Claims;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * 身份认证，检查用户是否登录切面类 .
@@ -34,34 +36,66 @@ public class AuthAop {
 
     private final JwtOperator jwtOperator;
 
-    @Around("@annotation(com.itchen.contentcenter.auth.Auth)")
-    public Object auth(ProceedingJoinPoint point) {
+    @Around("@annotation(com.itchen.contentcenter.auth.Authentication)")
+    public Object authentication(ProceedingJoinPoint point) throws Throwable {
+        handle(point);
+        checkToken();
+
+        return point.proceed();
+    }
+
+    @Around("@annotation(com.itchen.contentcenter.auth.Authorization)")
+    public Object authorization(ProceedingJoinPoint point) throws Throwable {
+        // 1. 验证 token 是否合法
+        this.checkToken();
         try {
-            handle(point);
+            // 2. 验证用户权限是否匹配
+            HttpServletRequest request = getHttpServletRequest();
+            String role = (String) request.getAttribute("role");
+
+            MethodSignature signature = (MethodSignature) point.getSignature();
+            Method method = signature.getMethod();
+            Authorization annotation = method.getAnnotation(Authorization.class);
+            String hasRole = annotation.hasRole();
+
+            if (!Objects.equals(role, hasRole)) {
+                throw new AuthSecurityException(ApiRCode.UN_AUTHORIZATION);
+            }
+        } catch (Throwable throwable) {
+            throw new AuthSecurityException(ApiRCode.UN_AUTHORIZATION, throwable);
+        }
+        return point.proceed();
+    }
+
+    private void checkToken() {
+        try {
             // 1. 从 header 里面获取 token
-            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
-            HttpServletRequest request = servletRequestAttributes.getRequest();
+            HttpServletRequest request = getHttpServletRequest();
 
             String token = request.getHeader("X-Token");
 
             // 2. 检验 token 是否合法&是否过期，如果不合法或已过期直接抛异常；如果合法则放行
-            Boolean isValidate = jwtOperator.validateToken(token);
 
+            Boolean isValidate = jwtOperator.validateToken(token);
             if (!isValidate) {
-                throw new AuthSecurityException("Token 不合法！");
+                throw new AuthSecurityException(ApiRCode.TOKEN_INVALIDED);
             }
+
             // 3. 如果校验成功，那么就将用户的信息设置到 request 的 attribute 里面
             Claims claims = jwtOperator.getClaimsFromToken(token);
 
             request.setAttribute("id", claims.get("id"));
             request.setAttribute("wxNickname", claims.get("wxNickname"));
             request.setAttribute("role", claims.get("role"));
-
-            return point.proceed();
-        } catch (Throwable throwable) {
-            throw new AuthSecurityException("Token 不合法！");
+        } catch (Exception e) {
+            throw new AuthSecurityException(ApiRCode.TOKEN_INVALIDED);
         }
+    }
+
+    private HttpServletRequest getHttpServletRequest() {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+        return servletRequestAttributes.getRequest();
     }
 
     private void handle(ProceedingJoinPoint point) throws Exception {
@@ -82,7 +116,7 @@ public class AuthAop {
         Object[] args = point.getArgs();
 
         // 获取注解的参数值
-        Auth annotation = currentMethod.getAnnotation(Auth.class);
+        Authentication annotation = currentMethod.getAnnotation(Authentication.class);
         String key = annotation.key();
         String value = annotation.value();
         log.info("【AuthAop 拦截的类名 = {}, 拦截的方法名 = {}, 拦截的方法参数 = {}】", className, methodName, args);
