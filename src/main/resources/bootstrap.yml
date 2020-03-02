@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+  application:
+    # 服务名称尽量使用 -，不要用 _，不要用特殊字符
+    name: content-center
+  profiles:
+    active: dev

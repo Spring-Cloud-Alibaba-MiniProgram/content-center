@@ -43,9 +43,7 @@ spring:
           # 用来指定 topic
           destination: add-bonus
 
-  application:
-    # 服务名称尽量使用 -，不要用 _，不要用特殊字符
-    name: content-center
+
 
   main:
     allow-bean-definition-overriding: true
@@ -104,3 +102,6 @@ jwt:
   secret: aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrsssttt
   # 有效期，单位秒，默认 2 周
   expire-time-in-second: 1209600
+
+your:
+  configuration:
