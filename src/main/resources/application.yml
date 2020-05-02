@@ -66,6 +66,7 @@ logging:
   level:
     com.itchen.contentcenter.feignclient.UserCenterFeignClient: debug
     com.alibaba.nacos: error
+    com.itchen.contentcenter.dao.share: debug
 
 # Feign 配置属性方式(全局/细粒度)
 feign:

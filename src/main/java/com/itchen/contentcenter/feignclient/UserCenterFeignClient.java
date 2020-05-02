@@ -1,10 +1,14 @@
 package com.itchen.contentcenter.feignclient;
 
+import com.itchen.contentcenter.domain.dto.user.UserAddBonusDTO;
 import com.itchen.contentcenter.domain.dto.user.UserDTO;
 import com.itchen.contentcenter.feignclient.fallbackfactory.UserCenterFeignClientFallbackFactory;
+import org.apache.tomcat.jni.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 用户中心远程调用客户端
@@ -30,5 +34,8 @@ public interface UserCenterFeignClient {
      */
     @GetMapping("/users/{id}")
     UserDTO findById(@PathVariable Integer id);
+
+    @PostMapping("/users/add-bonus")
+    User addBonus(@RequestBody UserAddBonusDTO dto);
 
 }

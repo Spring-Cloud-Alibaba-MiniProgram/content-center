@@ -1,9 +1,11 @@
 package com.itchen.contentcenter.feignclient.fallbackfactory;
 
+import com.itchen.contentcenter.domain.dto.user.UserAddBonusDTO;
 import com.itchen.contentcenter.domain.dto.user.UserDTO;
 import com.itchen.contentcenter.feignclient.UserCenterFeignClient;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.User;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +27,12 @@ public class UserCenterFeignClientFallbackFactory implements FallbackFactory<Use
                 UserDTO userDTO = new UserDTO();
                 userDTO.setWxNickname("一个默认用户");
                 return userDTO;
+            }
+
+            @Override
+            public User addBonus(UserAddBonusDTO dto) {
+                log.warn("远程调用被限流/降级了", throwable);
+                return null;
             }
         };
     }
