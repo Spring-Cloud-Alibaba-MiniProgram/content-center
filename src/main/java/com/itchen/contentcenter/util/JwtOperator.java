@@ -25,15 +25,18 @@ import java.util.Map;
 public class JwtOperator {
     /**
      * 秘钥
+     * ${property:xxx}设置默认值
+     * 优先读配置文件里的配置
+     * 如果读不到，就用冒号后面的东西作为默认值
      * - 默认 aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrsssttt
      */
-    @Value("${secret:aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrsssttt}")
+    @Value("${jwt.secret:aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrsssttt}")
     private String secret;
     /**
      * 有效期，单位秒
      * - 默认 2 周
      */
-    @Value("${expire-time-in-second:1209600}")
+    @Value("${jwt.expire-time-in-second:1209600}")
     private Long expirationTimeInSecond;
 
     /**
