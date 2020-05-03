@@ -242,4 +242,12 @@ public class TestController {
         return "success";
     }
 
+    @GetMapping("/test-node-service")
+    public String testNodeService() {
+        return this.restTemplate.getForObject(
+                // localhost:8060
+                "http://wii-node-service",
+                String.class);
+    }
+
 }
